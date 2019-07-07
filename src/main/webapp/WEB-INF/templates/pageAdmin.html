@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!--suppress ThymeleafVariablesResolveInspection-->
+    <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table {
+            margin: 50px auto 0 auto;
+            border-collapse: collapse;
+            text-align: center;
+            vertical-align: center;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            width: 200px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+<form action="" method="post" enctype="multipart/form-data">
+    <div class="cell">
+        <label for="avatar">考试题目导入</label><input type="file" name="avatar" id="avatar">
+        <button type="submit">确定</button>
+    </div>
+</form>
+<table>
+    <tr>
+        <th>题号</th>
+        <th>题干</th>
+        <th>a</th>
+        <th>b</th>
+        <th>c</th>
+        <th>d</th>
+        <th>答案</th>
+    </tr>
+    <tr th:each="question:${questionList}">
+        <td th:text="${question.id}"></td>
+        <td th:text="${question.title}"></td>
+        <td th:text="${question.a}"></td>
+        <td th:text="${question.b}"></td>
+        <td th:text="${question.c}"></td>
+        <td th:text="${question.d}"></td>
+        <td th:text="${question.result}"></td>
+    </tr>
+</table>
+</body>
+</html>

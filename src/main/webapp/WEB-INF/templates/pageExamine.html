@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="d0">
+    <div>
+        <h2 id="title"></h2>
+    </div>
+    <div >
+        <input type="radio" name="ans" id="A" value="A">
+        <label id="one" for="A"></label>
+    </div>
+    <div>
+        <input type="radio" name="ans" id="B" value="B">
+        <label id="two" for="B"></label>
+    </div>
+    <div>
+        <input type="radio" name="ans" id="C" value="C">
+        <label id="three" for="C"></label>
+    </div>
+    <div>
+        <input type="radio" name="ans" id="D" value="D">
+        <label id="four" for="D"></label>
+    </div>
+    <div>
+        <button id="up">上一题</button>
+        <button id="down">下一题</button>
+        <button id="sub">交卷</button>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+    let num = 0;
+    let arr=new Array();
+    let url="questionList";
+    $(function () {
+        $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "json",
+            success: function (response) {
+                //alert(111);
+                f1(response, num);
+            }
+        });
+
+        //下一题
+        $("#down").click(function () {
+            f2(num);
+            $("input[type='radio']").prop("checked","");
+            $.ajax({
+                url: url,
+                method: "post",
+                dataType: "json",
+                success: function (response) {
+                    if (num === response.length-1) {
+
+                        return;
+                    }
+                    num++;
+                    f1(response, num);
+                    if(arr[num]==null){
+                        $("input[type='radio']").removeAttr("disabled");
+                    }
+                    f3(num);
+                }
+            });
+        });
+
+
+        $("#up").click(function () {
+            //$("input[type='radio']").prop("checked","");
+            $.ajax({
+                url: url,
+                method: "post",
+                dataType: "json",
+                success: function (response) {
+                    if (num === 0) {
+                        return;
+                    }
+                    num--;
+                    f1(response, num);
+                    if(arr[num]==null){
+                        $("input[type='radio']").attr("disabled",false);
+                    }
+                    f3(num);
+                }
+            });
+            $("input[type='radio']").attr("disabled","disabled");
+
+        });
+
+        $("#sub").click(function () {
+            f2(num);
+            $.ajax({
+                url: "answerResult",
+                method: "GET",
+                dataType: "json",
+                data: {"answer": arr},
+                async: false,
+                traditional: true,//属性在这里设置
+                success: function (response) {
+                    //回调函数代码省略
+                    if (response != null) {
+                        window.location.href = "result";
+                    }
+                },
+                waitMsg: '正在处理数据....'
+            });
+
+        });
+    });
+
+    //显示方法
+    function f1(response, num) {
+       //
+        $("#title").html(response[num]["title"]);
+        $("#one").html(response[num]["a"]);
+        $("#two").html(response[num]["b"]);
+        $("#three").html(response[num]["c"]);
+        $("#four").html(response[num]["d"]);
+    }
+    //把所选答案存入数组
+    function f2(num) {
+        if($("#A").prop("checked")){
+            arr[num]=$("#A").val();
+        }else if($("#B").prop("checked")){
+            arr[num]=$("#B").val();
+        }else if($("#C").prop("checked")){
+            arr[num]=$("#C").val();
+        }else if($("#D").prop("checked")){
+            arr[num]=$("#D").val();
+        }else {
+            arr[num]=null;
+        }
+    }
+
+    //让选过的记住选中状态
+    function f3(num) {
+        if("A"===arr[num]){
+            $("#A").prop('checked','checked');
+        }else if("B"===arr[num]){
+            $("#B").prop('checked','checked');
+        }else if("C"===arr[num]){
+            $("#C").prop('checked','checked');
+
+        }else if("D"===arr[num]){
+            $("#D").prop('checked','checked');
+        }
+    }
+</script>
+</body>
+</html>
